@@ -1,0 +1,19 @@
+<configuration>
+
+    <springProperty name="appName" source="spring.application.name" defaultValue="query-analyzer"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"app_name":"${appName}"}</customFields>
+            <includeMdc>true</includeMdc>
+            <includeContext>false</includeContext>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <logger name="org.springframework" level="INFO" />
+    <logger name="com.queryanalyzer.backend" level="DEBUG" />
+</configuration>
