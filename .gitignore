@@ -1,0 +1,61 @@
+# IDE & Editor
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+Thumbs.db
+*.sw?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Backend (Java/Maven)
+target/
+*.jar
+*.war
+dependency-reduced-pom.xml
+.mvn/wrapper/maven-wrapper.jar
+hs_err_pid*.log
+replay_pid*.log
+
+# Frontend (Node/React)
+node_modules/
+dist/
+dist-ssr/
+build/
+.npm/
+.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Secrets & Environment
+.env
+.env.local
+.env.*.local
+*.pem
+keys/
+*.key
+
+# Logs
+*.log
+logs/
+
+# OS & Temp
+*.tmp
+*.temp
+.cache/
+
+# Refact/Tooling
+.refact/
+
+# Backup files
+*~
+*.bak
+*.tmp

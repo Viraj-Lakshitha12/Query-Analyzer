@@ -1,0 +1,57 @@
+services:
+
+  # ── Analyzer DB (port 5433) ───────────────────────────────────────────────
+  analyzer-postgres:
+    image: postgres:16-alpine
+    container_name: analyzer-postgres
+    environment:
+      POSTGRES_DB:       analyzer_db
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5433:5432"
+    volumes:
+      - analyzer_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d analyzer_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Loan App DB (port 5432) ──────────────────────────────────────────────
+  loan-postgres:
+    image: postgres:15-alpine
+    container_name: loan-postgres
+    environment:
+      POSTGRES_DB:       loan_db
+      POSTGRES_USER:     loan
+      POSTGRES_PASSWORD: loan123
+    ports:
+      - "5432:5432"
+    volumes:
+      - loan_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loan -d loan_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: analyzer-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  analyzer_pg_data:
+  loan_pg_data:
+  redis_data:
