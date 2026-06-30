@@ -122,3 +122,68 @@
     @apply text-sm text-foreground bg-background antialiased;
   }
 }
+
+/* ── Auth Page Animations ── */
+
+@keyframes auth-float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12px, -18px) scale(1.05); }
+}
+@keyframes auth-float-medium {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-16px, 14px) scale(1.08); }
+}
+@keyframes auth-float-fast {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(8px, -10px); }
+}
+
+@keyframes auth-fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes auth-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes auth-glow-pulse {
+  0%, 100% { box-shadow: 0 0 16px 0 rgba(59, 130, 246, 0.25); }
+  50% { box-shadow: 0 0 28px 4px rgba(59, 130, 246, 0.40); }
+}
+
+@keyframes auth-icon-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.auth-float-slow   { animation: auth-float-slow 8s ease-in-out infinite; }
+.auth-float-medium { animation: auth-float-medium 6s ease-in-out infinite; }
+.auth-float-fast   { animation: auth-float-fast 4s ease-in-out infinite; }
+
+.auth-fade-up {
+  animation: auth-fade-up 0.5s ease-out both;
+}
+.auth-fade-up-1 { animation: auth-fade-up 0.5s 0.05s ease-out both; }
+.auth-fade-up-2 { animation: auth-fade-up 0.5s 0.12s ease-out both; }
+.auth-fade-up-3 { animation: auth-fade-up 0.5s 0.19s ease-out both; }
+.auth-fade-up-4 { animation: auth-fade-up 0.5s 0.26s ease-out both; }
+.auth-fade-up-5 { animation: auth-fade-up 0.5s 0.33s ease-out both; }
+
+.auth-icon-bob { animation: auth-icon-bob 3s ease-in-out infinite; }
+
+.auth-btn-glow:hover {
+  animation: auth-glow-pulse 1.8s ease-in-out infinite;
+}
+
+.auth-cta-shimmer {
+  background-size: 200% auto;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.15) 50%,
+    transparent 100%
+  );
+  animation: auth-shimmer 3s linear infinite;
+}
