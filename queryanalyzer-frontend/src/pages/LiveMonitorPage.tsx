@@ -71,14 +71,14 @@ export default function Dashboard() {
             bg: (analytics?.summary.n1Detections || 0) > 0 ? 'bg-rose-500/10' : 'bg-emerald-500/10' 
           },
         ].map((stat, i) => (
-          <div key={i} className="p-8 sm:p-10 rounded-xl border border-border bg-card text-card-foreground shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-muted-foreground text-base font-medium">{stat.label}</span>
-              <div className={`p-2 rounded-lg ${stat.bg}`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
-              </div>
+          <div key={i} className="p-6 rounded-2xl border border-border bg-card text-card-foreground shadow-sm flex items-center gap-4">
+            <div className={`p-3 rounded-xl ${stat.bg}`}>
+              <stat.icon className={`w-6 h-6 ${stat.color}`} />
             </div>
-            <div className={`text-4xl font-bold tracking-tight ${stat.color.split(' ')[0].replace('text-', 'text-')}`}>{stat.value}</div>
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+              <h4 className={`text-2xl font-bold tracking-tight mt-0.5 ${stat.color.split(' ')[0].replace('text-', 'text-')}`}>{stat.value}</h4>
+            </div>
           </div>
         ))}
       </div>

@@ -40,7 +40,7 @@ export default function QueryExplorerPage() {
         </div>
       </div>
 
-      <div className="bg-card border border-border rounded-xl flex-1 flex flex-col overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-xl flex-1 flex flex-col overflow-x-auto shadow-sm">
         {/* Toolbar */}
         <div className="p-6 border-b border-border flex flex-col sm:flex-row gap-4 bg-card">
           <div className="relative flex-1 max-w-md">

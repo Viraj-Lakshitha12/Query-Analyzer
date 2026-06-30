@@ -49,12 +49,12 @@ export default function AnalyticsPage() {
               { label: 'N+1 Patterns', value: n1Patterns?.length || 0, icon: Layers, color: 'text-rose-500', bg: 'bg-rose-500/10' },
             ].map((stat, i) => (
               <div key={i} className="p-6 rounded-xl border border-border bg-card shadow-sm flex items-center gap-4">
-                <div className={`p-4 rounded-xl ${stat.bg}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                <div className={`p-3 rounded-xl ${stat.bg}`}>
+                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-muted-foreground mb-1">{stat.label}</div>
-                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</p>
+                  <h4 className="text-xl font-bold tracking-tight text-foreground">{stat.value}</h4>
                 </div>
               </div>
             ))}
