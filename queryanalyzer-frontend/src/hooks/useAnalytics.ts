@@ -6,6 +6,8 @@ export const useAnalytics = (appId: string | null, from: string, to: string) => 
     queryKey: ['analytics', appId, from, to],
     queryFn: () => getAnalytics(appId!, from, to),
     enabled: !!appId,
+    refetchInterval: 10000,
+    refetchIntervalInBackground: false,
   });
 };
 

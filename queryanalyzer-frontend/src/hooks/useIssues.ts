@@ -7,6 +7,8 @@ export const useIssues = (appId: string | null, params?: Record<string, any>) =>
     queryFn: () => getIssues(appId!, params),
     enabled: !!appId,
     placeholderData: (previousData) => previousData,
+    refetchInterval: 30000,
+    refetchIntervalInBackground: false,
   });
 };
 

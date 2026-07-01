@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useQueries } from '../hooks/useQueries';
 import QueryDrawer from '../components/QueryDrawer';
-import { Database, Search, Clock, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Database, Search, Clock, FileText, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 
 export default function QueryExplorerPage() {
   const { activeApp } = useApp();
@@ -11,7 +11,7 @@ export default function QueryExplorerPage() {
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'SLOW' | 'N+1'>('ALL');
   const [selectedQueryId, setSelectedQueryId] = useState<string | null>(null);
 
-  const { data: queriesPage, isLoading } = useQueries(activeApp?.id || null, {
+  const { data: queriesPage, isLoading, isFetching, refetch } = useQueries(activeApp?.id || null, {
     page,
     size: 20,
     search: search || undefined,
@@ -67,6 +67,15 @@ export default function QueryExplorerPage() {
                 {f}
               </button>
             ))}
+            <div className="w-px bg-border mx-1" />
+            <button
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
           </div>
         </div>
 

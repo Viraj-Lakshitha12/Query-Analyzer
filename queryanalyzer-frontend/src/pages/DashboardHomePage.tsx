@@ -12,6 +12,8 @@ import {
   Activity,
   Database,
   Zap,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,6 +27,10 @@ export default function DashboardHomePage() {
   const [newAppEnv, setNewAppEnv] = useState("DEV");
   const [newAppThreshold, setNewAppThreshold] = useState("200");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Delete App State
+  const [appToDelete, setAppToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCreateApp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +72,23 @@ export default function DashboardHomePage() {
     setCopiedKey(text);
     setTimeout(() => setCopiedKey(null), 2000);
     toast.success("Copied to clipboard");
+  };
+
+  const handleDeleteApp = async () => {
+    if (!appToDelete) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/apps/${appToDelete.id}`);
+      await refreshApps();
+      setAppToDelete(null);
+      toast.success("Application deleted successfully!");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || "Failed to delete application",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (isLoading && apps.length === 0) {
@@ -224,9 +247,21 @@ export default function DashboardHomePage() {
                     <Check className="w-4 h-4" />
                   </span>
                 ) : (
-                  <button className="text-muted-foreground hover:text-blue-500 transition-colors p-1 opacity-0 group-hover:opacity-100 focus:opacity-100">
-                    <Settings className="w-5 h-5" />
-                  </button>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <button className="text-muted-foreground hover:text-blue-500 transition-colors p-1 cursor-pointer" title="Settings">
+                      <Settings className="w-5 h-5" />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setAppToDelete(app);
+                      }}
+                      className="text-muted-foreground hover:text-rose-500 transition-colors p-1 cursor-pointer" 
+                      title="Delete App"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -398,6 +433,51 @@ export default function DashboardHomePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Delete Confirmation Modal ── */}
+      {appToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
+            onClick={() => setAppToDelete(null)}
+          ></div>
+          <div className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-8 animate-in fade-in zoom-in-95 duration-200 text-foreground">
+            <div className="flex items-center gap-3 mb-6 relative z-10">
+              <div className="p-3 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold tracking-tight text-foreground">
+                  Delete Application
+                </h2>
+              </div>
+            </div>
+            
+            <p className="text-sm text-muted-foreground mb-6 relative z-10 leading-relaxed">
+              Are you sure you want to delete <span className="font-bold text-foreground">{appToDelete.name}</span>? 
+              This will permanently remove all associated analytics, queries, and issues. This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3 relative z-10">
+              <button
+                type="button"
+                onClick={() => setAppToDelete(null)}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteApp}
+                disabled={isDeleting}
+                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-rose-500/25 disabled:opacity-50 flex items-center gap-2 cursor-pointer active:scale-95"
+              >
+                {isDeleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}

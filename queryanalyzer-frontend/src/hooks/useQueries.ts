@@ -8,6 +8,8 @@ export const useQueries = (appId: string | null, params?: Record<string, any>) =
     enabled: !!appId,
     // Keep previous data while fetching a new page to prevent UI jitter
     placeholderData: (previousData) => previousData,
+    refetchInterval: 15000,
+    refetchIntervalInBackground: false,
   });
 };
 

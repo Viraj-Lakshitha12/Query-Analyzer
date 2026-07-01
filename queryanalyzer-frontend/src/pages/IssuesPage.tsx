@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useIssues, useResolveIssue } from '../hooks/useIssues';
-import { AlertTriangle, CheckCircle2, Search } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Search, RefreshCw } from 'lucide-react';
 
 export default function IssuesPage() {
   const { activeApp } = useApp();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'All' | 'N+1' | 'Missing Index' | 'Resolved'>('All');
   
-  const { data: issues, isLoading } = useIssues(activeApp?.id || null);
+  const { data: issues, isLoading, isFetching, refetch } = useIssues(activeApp?.id || null);
   const { mutate: resolveIssue, isPending: isResolving } = useResolveIssue();
 
   const activeIssues = issues?.filter(i => !i.resolved) || [];
@@ -86,6 +86,15 @@ export default function IssuesPage() {
                 {tab}
               </button>
             ))}
+            <div className="w-px bg-border mx-1" />
+            <button
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
           </div>
         </div>
 
