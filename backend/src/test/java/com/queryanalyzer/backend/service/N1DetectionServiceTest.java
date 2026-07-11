@@ -58,6 +58,7 @@ class N1DetectionServiceTest {
     @Test
     void testCheck_SetsTtlOnFirstHit() {
         // Arrange
+        testLog.setQueryType("SELECT");
         when(normalizer.normalize(anyString())).thenReturn("SELECT * FROM users WHERE id = ?");
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment(anyString())).thenReturn(1L);
@@ -73,6 +74,7 @@ class N1DetectionServiceTest {
     @Test
     void testCheck_FlagsN1IssueAtThreshold() {
         // Arrange
+        testLog.setQueryType("SELECT");
         when(normalizer.normalize(anyString())).thenReturn("SELECT * FROM users WHERE id = ?");
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment(anyString())).thenReturn(10L); // THRESHOLD_COUNT
@@ -91,6 +93,7 @@ class N1DetectionServiceTest {
     @Test
     void testCheck_DoesNotFlagN1IssueIfAlreadyExists() {
         // Arrange
+        testLog.setQueryType("SELECT");
         when(normalizer.normalize(anyString())).thenReturn("SELECT * FROM users WHERE id = ?");
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment(anyString())).thenReturn(10L); // THRESHOLD_COUNT
@@ -107,6 +110,7 @@ class N1DetectionServiceTest {
     @Test
     void testCheck_DoesNothingIfUnderThresholdAndNotFirst() {
         // Arrange
+        testLog.setQueryType("SELECT");
         when(normalizer.normalize(anyString())).thenReturn("SELECT * FROM users WHERE id = ?");
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment(anyString())).thenReturn(5L);
