@@ -7,6 +7,7 @@ export default function IssuesPage() {
   const { activeApp } = useApp();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'All' | 'N+1' | 'Missing Index' | 'Resolved'>('All');
+  const [severityFilter, setSeverityFilter] = useState<'ALL' | 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'>('ALL');
   
   const { data: issues, isLoading, isFetching, refetch } = useIssues(activeApp?.id || null);
   const { mutate: resolveIssue, isPending: isResolving } = useResolveIssue();
@@ -17,10 +18,14 @@ export default function IssuesPage() {
   const mediumCount = activeIssues.filter(i => i.severity === 'MEDIUM').length;
 
   const filteredIssues = issues?.filter(issue => {
+    // Type filter
     if (activeTab === 'Resolved' && !issue.resolved) return false;
     if (activeTab !== 'Resolved' && issue.resolved) return false;
     if (activeTab === 'N+1' && issue.issueType !== 'N_PLUS_ONE') return false;
     if (activeTab === 'Missing Index' && issue.issueType !== 'MISSING_INDEX') return false;
+
+    // Severity filter (AND with type)
+    if (severityFilter !== 'ALL' && issue.severity !== severityFilter) return false;
 
     if (search) {
       const s = search.toLowerCase();
@@ -72,29 +77,54 @@ export default function IssuesPage() {
               className="w-full bg-input border border-input rounded-md pl-9 pr-4 py-3 text-base text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-shadow"
             />
           </div>
-          <div className="flex gap-2">
-            {(['All', 'N+1', 'Missing Index', 'Resolved'] as const).map(tab => (
+          <div className="flex flex-col gap-3">
+            {/* Severity filter chips */}
+            <div className="flex gap-2 items-center">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider mr-1">Severity:</span>
+              {(['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as const).map(sev => (
+                <button
+                  key={sev}
+                  onClick={() => setSeverityFilter(sev)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer border ${
+                    severityFilter === sev
+                      ? sev === 'ALL' ? 'bg-blue-500 text-white border-blue-500 shadow-sm'
+                        : sev === 'CRITICAL' ? 'bg-rose-500 text-white border-rose-500 shadow-sm'
+                        : sev === 'HIGH' ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                        : sev === 'MEDIUM' ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
+                        : 'bg-sky-500 text-white border-sky-500 shadow-sm'
+                      : 'bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:text-foreground'
+                  }`}
+                >
+                  {sev}
+                </button>
+              ))}
+            </div>
+            {/* Type filter chips */}
+            <div className="flex gap-2 items-center">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider mr-1">Type:</span>
+              {(['All', 'N+1', 'Missing Index', 'Resolved'] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                    activeTab === tab 
+                      ? 'bg-blue-500 text-white shadow-sm' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+              <div className="w-px bg-border mx-1 self-stretch" />
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === tab 
-                    ? 'bg-blue-500 text-white shadow-sm' 
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-                }`}
+                onClick={() => refetch()}
+                disabled={isFetching}
+                className="px-4 py-1.5 rounded-md text-xs font-medium transition-colors bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {tab}
+                <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+                Refresh
               </button>
-            ))}
-            <div className="w-px bg-border mx-1" />
-            <button
-              onClick={() => refetch()}
-              disabled={isFetching}
-              className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
+            </div>
           </div>
         </div>
 
@@ -167,7 +197,7 @@ export default function IssuesPage() {
                           <button
                             onClick={() => resolveIssue({ appId: activeApp.id, issueId: issue.id })}
                             disabled={isResolving}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Resolve
                           </button>

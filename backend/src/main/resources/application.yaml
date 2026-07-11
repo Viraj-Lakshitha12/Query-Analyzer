@@ -64,6 +64,9 @@ queryanalyzer:
   jwt:
     secret: ${JWT_SECRET:QueryAnalyzer2026SecretKeyForJWTSigningMustBeAtLeast256Bits!!}
     expiration-ms: ${QUERYANALYZER_JWT_EXPIRATION_MS:86400000}  # 24 hours
+  ai:
+    gemini:
+      api-key: ${GEMINI_API_KEY:mock_key}
 
 # ── Springdoc (Swagger UI) ──────────────────────────────────────────────────
 springdoc:

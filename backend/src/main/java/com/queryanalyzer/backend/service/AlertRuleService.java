@@ -39,6 +39,7 @@ public class AlertRuleService {
                 .metric(request.getMetricName())
                 .thresholdValue(request.getThresholdValue())
                 .channel(request.getChannel())
+                .webhookUrl(request.getWebhookUrl())
                 .emailAddress(request.getEmailAddress())
                 .active(request.isActive())
                 .build();
@@ -57,6 +58,7 @@ public class AlertRuleService {
         rule.setMetric(request.getMetricName());
         rule.setThresholdValue(request.getThresholdValue());
         rule.setChannel(request.getChannel());
+        rule.setWebhookUrl(request.getWebhookUrl());
         rule.setEmailAddress(request.getEmailAddress());
         rule.setActive(request.isActive());
 
@@ -78,6 +80,7 @@ public class AlertRuleService {
                 .metricName(rule.getMetric())
                 .thresholdValue(rule.getThresholdValue())
                 .channel(rule.getChannel())
+                .webhookUrl(rule.getWebhookUrl())
                 .emailAddress(rule.getEmailAddress())
                 .active(rule.isActive())
                 .build();

@@ -12,6 +12,7 @@ public class AlertRuleRequest {
     private Integer thresholdValue;
     @NotBlank
     private String channel;
+    private String webhookUrl;
     private String emailAddress;
     private boolean active = true;
 }

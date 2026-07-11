@@ -17,6 +17,7 @@ import LiveMonitor from "./pages/LiveMonitorPage";
 import QueryExplorer from "./pages/QueryExplorerPage";
 import IssuesPage from "./pages/IssuesPage";
 import SettingsPage from "./pages/SettingsPage";
+import AlertsPage from "./pages/AlertsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import { Toaster } from 'sonner';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -66,6 +67,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="queries" element={<QueryExplorer />} />
                 <Route path="issues" element={<IssuesPage />} />
+                <Route path="alerts" element={<AlertsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
               </Routes>

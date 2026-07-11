@@ -12,6 +12,7 @@ public class AlertRuleDTO {
     private String metricName;
     private int thresholdValue;
     private String channel;
+    private String webhookUrl;
     private String emailAddress;
     private boolean active;
 }

@@ -189,15 +189,25 @@ public class ExecutionPlanService {
         if (exists) return;
 
         String table  = parsed.relationName() != null ? parsed.relationName() : "unknown_table";
-        String col    = parsed.filterColumn()  != null ? parsed.filterColumn()  : "filter_column";
-        String idxName = "idx_" + table + "_" + col;
+        String suggestion;
 
-        String suggestion = String.format(
-            "Sequential Scan on table '%s' (scanned ~%d rows). " +
-            "Consider: CREATE INDEX CONCURRENTLY %s ON %s(%s); " +
-            "Expected improvement: Seq Scan -> Index Scan.",
-            table, parsed.rowsScanned(), idxName, table, col
-        );
+        if (parsed.filterColumn() != null) {
+            String col = parsed.filterColumn();
+            String idxName = "idx_" + table + "_" + col;
+            suggestion = String.format(
+                "Sequential Scan on table '%s' (scanned ~%d rows). " +
+                "Consider: CREATE INDEX CONCURRENTLY %s ON %s(%s); " +
+                "Expected improvement: Seq Scan -> Index Scan.",
+                table, parsed.rowsScanned(), idxName, table, col
+            );
+        } else {
+            suggestion = String.format(
+                "Sequential Scan on table '%s' (scanned ~%d rows). " +
+                "Consider adding an index on the filtered column. " +
+                "Expected improvement: Seq Scan -> Index Scan.",
+                table, parsed.rowsScanned()
+            );
+        }
 
         issueRepository.save(QueryIssue.builder()
             .queryLog(queryLog)

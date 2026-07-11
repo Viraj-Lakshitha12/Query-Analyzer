@@ -6,6 +6,7 @@ import {
   Activity,
   Database,
   AlertTriangle,
+  Bell,
   Settings,
   LogOut,
   Code2,
@@ -42,6 +43,7 @@ export default function Layout() {
     { name: "Live Monitor", href: "/live", icon: Activity },
     { name: "Queries", href: "/queries", icon: Database },
     { name: "Issues", href: "/issues", icon: AlertTriangle },
+    { name: "Alerts", href: "/alerts", icon: Bell },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 

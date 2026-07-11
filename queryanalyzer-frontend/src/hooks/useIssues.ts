@@ -1,9 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getIssues, resolveIssue } from '../api/issues';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getIssues, resolveIssue } from "../api/issues";
+import { toast } from "sonner";
 
-export const useIssues = (appId: string | null, params?: Record<string, any>) => {
+export const useIssues = (
+  appId: string | null,
+  params?: Record<string, any>,
+) => {
   return useQuery({
-    queryKey: ['issues', appId, params],
+    queryKey: ["issues", appId, params],
     queryFn: () => getIssues(appId!, params),
     enabled: !!appId,
     placeholderData: (previousData) => previousData,
@@ -14,12 +18,17 @@ export const useIssues = (appId: string | null, params?: Record<string, any>) =>
 
 export const useResolveIssue = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ appId, issueId }: { appId: string, issueId: string }) => resolveIssue(appId, issueId),
+    mutationFn: ({ appId, issueId }: { appId: string; issueId: string }) =>
+      resolveIssue(appId, issueId),
     onSuccess: (_, { appId }) => {
       // Invalidate issues query to refetch
-      queryClient.invalidateQueries({ queryKey: ['issues', appId] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["issues", appId] });
+      toast.success("Issue marked as resolved");
+    },
+    onError: () => {
+      toast.error("Failed to resolve issue");
+    },
   });
 };
