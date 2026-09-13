@@ -34,6 +34,18 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: viraj.lakshitha.22222@gmail.com
+    password: 1234
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   # ── Flyway migrations ───────────────────────────────────────────────────────
   flyway:
     enabled: true
@@ -67,6 +79,8 @@ queryanalyzer:
   ai:
     gemini:
       api-key: ${GEMINI_API_KEY:mock_key}
+  alert:
+    cooldown-minutes: 1
 
 # ── Springdoc (Swagger UI) ──────────────────────────────────────────────────
 springdoc:

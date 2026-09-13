@@ -16,10 +16,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import jakarta.persistence.EntityManager;
+
 @RestController
 @RequestMapping("/demo")
 @RequiredArgsConstructor
 public class DemoController {
+
+    private final EntityManager em;
 
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
@@ -35,6 +39,14 @@ public class DemoController {
         // and cannot be helped by a normal index even if one existed
         List<Customer> list = customerRepository.findByEmailContaining(email);
         return Map.<String, Object>of("endpoint", "Customer by Email (Partial Match)", "results", list.size());
+    }
+
+    @GetMapping("/slow/guaranteed-slow")
+    public Map<String, Object> guaranteedSlow() {
+        // Execute a real SQL query that sleeps in the database for 300ms (0.3 seconds)
+        // This ensures the QueryAnalyzer JDBC interceptor actually measures it as > 200ms
+        em.createNativeQuery("SELECT pg_sleep(0.3)").getResultList();
+        return Map.<String, Object>of("endpoint", "Guaranteed Slow Query (>200ms)", "status", "success");
     }
 
     @GetMapping("/slow/customer-by-city")
@@ -71,14 +83,13 @@ public class DemoController {
 
     @GetMapping("/slow/orders-by-city")
     public Map<String, Object> ordersByCityN1(@RequestParam(defaultValue = "Galle") String city) {
-        List<Customer> customers = customerRepository.findByCity(city);
         int orderCount = 0;
-        // Loop triggers N+1 query pattern on orders table
-        for (Customer c : customers) {
-            List<Order> orders = orderRepository.findByCustomerId(c.getId());
+        // Loop EXACTLY 15 times to guarantee the N+1 threshold (10 queries) is crossed
+        for (int i = 1; i <= 15; i++) {
+            List<Order> orders = orderRepository.findByCustomerId((long) i);
             orderCount += orders.size();
         }
-        return Map.<String, Object>of("endpoint", "Orders by City (N+1)", "customers_scanned", customers.size(), "orders_found", orderCount);
+        return Map.<String, Object>of("endpoint", "Orders by City (Guaranteed N+1)", "queries_executed", 15, "orders_found", orderCount);
     }
 
     @GetMapping("/slow/order-items-bulk")
