@@ -42,8 +42,10 @@ Java 17 · Spring Boot 3 · PostgreSQL · Redis · React · Vite · Tailwind · 
 ```text
 query-analyzer/
 ├── backend/              # Spring Boot analysis engine & central hub
-├── frontend/             # React + Vite live dashboard
+├── queryanalyzer-frontend/    # React + Vite live dashboard
+├── queryanalyzer-agent/       # Java agent library for query interception
 ├── sample-target-app/    # Demo Spring Boot app with planted anti-patterns
+├── docker-compose.yml    # PostgreSQL and Redis containers
 └── README.md
 ```
 
@@ -51,11 +53,12 @@ query-analyzer/
 
 ## 🏗️ System Architecture
 
-The ecosystem consists of three main components:
+The ecosystem consists of four main components:
 
-1.  **Backend (Central Hub)**: A Spring Boot application managing the REST APIs, WebSocket streams, Alert Engine, PostgreSQL database, and Redis cache.
-2.  **Frontend (Dashboard)**: A React/Vite application for data visualization and rule management.
-3.  **Target Application (Client)**: Any Spring Boot application integrated with the Query Analyzer Interceptor. *(A Sample Target App is included in this repository for testing).*
+1.  **Backend (Central Hub)**: A Spring Boot application managing the REST APIs, WebSocket streams, Alert Engine, PostgreSQL database, and Redis cache. See [backend/README.md](backend/README.md) for detailed setup.
+2.  **Frontend (Dashboard)**: A React/Vite application for data visualization and rule management. See [queryanalyzer-frontend/README.md](queryanalyzer-frontend/README.md) for detailed setup.
+3.  **Agent Library**: A Java agent library for intercepting SQL queries in Spring Boot applications. See [queryanalyzer-agent/README.md](queryanalyzer-agent/README.md) for integration instructions.
+4.  **Sample Target App**: A demo Spring Boot application with planted performance anti-patterns for testing. See [sample-target-app/README.md](sample-target-app/README.md) for demo endpoints.
 
 ---
 
@@ -73,24 +76,25 @@ Follow these steps to run the Query Analyzer Hub on your local machine.
 | PostgreSQL | `5433` |
 | Redis | `6379` |
 
-### 1. Database & Cache Configuration
-Create the central database in PostgreSQL:
-```sql
-CREATE DATABASE analyzer_db;
-```
+### 1. Start Infrastructure (Docker Compose)
 
-Start Redis (e.g., using Docker):
+Start PostgreSQL and Redis using Docker Compose:
 ```bash
-docker run -d -p 6379:6379 redis:7
+docker-compose up -d
 ```
 
-Navigate to `backend/src/main/resources/application.yaml` and configure your environments:
+This will start:
+- PostgreSQL on port 5433
+- Redis on port 6379
+
+The database `analyzer_db` will be created automatically by Flyway migrations.
+
+### 2. Configure Backend
+
+Configure email and AI settings in `backend/src/main/resources/application.yaml`:
+
 ```yaml
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5433/analyzer_db
-    username: postgres
-    password: your_db_password
   mail:
     username: your_email@gmail.com
     password: your_16_char_google_app_password
@@ -103,16 +107,16 @@ queryanalyzer:
 
 *Note: Google Gemini and Email Alerting are optional. Without a Gemini key, the system gracefully falls back to rule-based advice only. Without a mail password, alerts are still generated in the backend but the email sending is skipped.*
 
-### 2. Start the Backend Server
+### 3. Start the Backend Server
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
 *Flyway will automatically execute database migrations on startup.*
 
-### 3. Start the Frontend Dashboard
+### 4. Start the Frontend Dashboard
 ```bash
-cd frontend
+cd queryanalyzer-frontend
 npm install
 npm run dev
 ```
@@ -127,8 +131,17 @@ Want to monitor your own Spring Boot project?
 **Step 1: Get an SDK Key**
 Open the Frontend Dashboard (`http://localhost:5173`), go to **Applications**, and click **"Create App"**. Copy the generated `SDK Key`.
 
-**Step 2: Add the Configuration to your app's `application.yml`**
-Ensure the interceptor classes are in your project path, and add the following properties so it knows where to send the intercepted SQL logs:
+**Step 2: Add the Agent Dependency to your `pom.xml`**
+
+```xml
+<dependency>
+    <groupId>com.queryanalyzer</groupId>
+    <artifactId>queryanalyzer-agent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+**Step 3: Add the Configuration to your app's `application.yml`**
 
 ```yaml
 queryanalyzer:
@@ -179,7 +192,3 @@ Open your browser and hit these mock endpoints to generate real performance aler
 *   **Zero business-code changes required.**
 
 ---
-
-## 🎓 Academic Use
-
-*Final Year Project (COM646). Not intended as a production APM replacement.*
