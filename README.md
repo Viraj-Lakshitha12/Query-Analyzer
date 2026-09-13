@@ -3,7 +3,6 @@
   <p><b>Advanced Real-Time Database Performance Monitoring & AI-Powered Optimization</b></p>
   
   <p>
-    <b>Student:</b> Viraj Lakshitha Adhikari (25026132)<br>
     <b>Course:</b> BSc (Hons) Applied Computing — COM646 Final Year Project<br>
     <b>Institution:</b> Glyndŵr University / Wrexham University<br>
     <b>Year:</b> 2026
