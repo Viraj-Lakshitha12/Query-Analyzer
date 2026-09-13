@@ -5,7 +5,7 @@ import jakarta.mail.internet.*;
 public class TestEmail {
     public static void main(String[] args) {
         String username = "viraj.lakshitha.22222@gmail.com";
-        String password = "xfixduqxlidcigui";
+        String password = "1234";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
